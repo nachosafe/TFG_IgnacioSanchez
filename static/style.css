@@ -1,0 +1,55 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Cambia la fuente a Roboto */
+    font-size: 16px; /* Ajusta el tamaño del texto */
+    letter-spacing: 0.5px; /* Ajusta el espaciado de las letras */
+    background-color: #121212;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #1f1f1f; /* Fondo de chat oscuro */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-box {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #1f1f1f; /* Fondo de chat oscuro */
+    color: #ffffff; /* Texto blanco */
+}
+
+.message {
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-size: 16px; /* Ajusta el tamaño del texto */
+    letter-spacing: 0.5px; /* Ajusta el espaciado de las letras */
+}
+
+input[type="text"] {
+    width: calc(100% - 70px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #1f1f1f; /* Fondo de entrada oscuro */
+    color: #ffffff; /* Texto blanco */
+}
+
+button {
+    width: 60px;
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

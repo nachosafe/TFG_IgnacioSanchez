@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT - Preguntas de Traumatología</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Escribe tu pregunta...">
+        <button onclick="buscarRespuestas()">Enviar</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function buscarRespuestas() {
+            var pregunta = document.getElementById('user-input').value;
+            $.post('/buscar_respuestas', { pregunta: pregunta }, function(data) {
+                // Limpiar el chat antes de agregar nuevas respuestas
+                $('#chat-box').empty();
+
+                // Iterar sobre las respuestas recibidas y agregarlas al chat
+                data.forEach(function(respuesta) {
+                    $('#chat-box').append('<div class="message">Tú: ' + pregunta + '</div>');
+                    $('#chat-box').append('<div class="message">ChatBot: ' + respuesta.respuesta + '</div>');
+                });
+
+                // Limpiar el campo de entrada después de enviar la pregunta
+                document.getElementById('user-input').value = '';
+            });
+        }
+    </script>
+</body>
+</html>
