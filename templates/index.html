@@ -3,34 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT - Preguntas de Traumatología</title>
+    <title>Preguntas de Traumatología</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-box" id="chat-box"></div>
-        <input type="text" id="user-input" placeholder="Escribe tu pregunta...">
-        <button onclick="buscarRespuestas()">Enviar</button>
-    </div>
+    {% if session.get('logged_in') %}
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="logout-button">Cerrar sesión</a>
+        </div>
+        <div class="chat-container">
+            <div class="chat-box" id="chat-box"></div>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="user-input" placeholder="Escribe tu pregunta...">
+                <button id="send-button" onclick="buscarRespuestas()">Enviar</button>
+            </div>
+        </div>
+    {% else %}
+        <div class="login-container">
+            <p>Debes iniciar sesión para acceder a esta página.</p>
+        </div>
+    {% endif %}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function buscarRespuestas() {
             var pregunta = document.getElementById('user-input').value;
+            var inputField = document.getElementById('user-input');
+            var sendButton = document.getElementById('send-button');
+
+            // Disable input and button
+            inputField.disabled = true;
+            sendButton.disabled = true;
+
             $.post('/buscar_respuestas', { pregunta: pregunta }, function(data) {
-                // Limpiar el chat antes de agregar nuevas respuestas
-                $('#chat-box').empty();
-
-                // Iterar sobre las respuestas recibidas y agregarlas al chat
+                $('#chat-box').append('<div class="message user-message">Tú: ' + pregunta + '</div>');
                 data.forEach(function(respuesta) {
-                    $('#chat-box').append('<div class="message">Tú: ' + pregunta + '</div>');
-                    $('#chat-box').append('<div class="message">ChatBot: ' + respuesta.respuesta + '</div>');
+                    $('#chat-box').append('<div class="message bot-message"><img src="' + '{{ url_for("static", filename="doctor-avatar.png") }}' + '" class="avatar"> ChatBot: ' + respuesta.respuesta + '</div>');
                 });
+                $('#chat-box').append('<div class="message bot-message"><img src="' + '{{ url_for("static", filename="doctor-avatar.png") }}' + '" class="avatar"> ChatBot: ¿La respuesta fue útil? <button onclick="respuestaUtil(true)">Sí</button><button onclick="respuestaUtil(false, \'' + pregunta + '\')">No</button></div>');
 
-                // Limpiar el campo de entrada después de enviar la pregunta
-                document.getElementById('user-input').value = '';
-            });
+                // Clear the input field
+                inputField.value = '';
+
+                // Scroll to the bottom of the chat box
+                $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+
+                // Re-enable input and button
+                inputField.disabled = false;
+                sendButton.disabled = false;
+
+                // Focus on the input field for better UX
+                inputField.focus();
+            }, 'json');
         }
+
+        function respuestaUtil(util, pregunta) {
+            if (util) {
+                $('#chat-box').append('<div class="message bot-message"><img src="' + '{{ url_for("static", filename="doctor-avatar.png") }}' + '" class="avatar"> ChatBot: Gracias por usar el servicio. ¡Pregunta si tienes más dudas!</div>');
+            } else {
+                $('#chat-box').append('<div class="message bot-message"><img src="' + '{{ url_for("static", filename="doctor-avatar.png") }}' + '" class="avatar"> ChatBot: Lo siento, no tengo la información específica que estás buscando en este momento. Sin embargo, te recomiendo consultar fuentes confiables o hablar directamente con un profesional de la salud para obtener la información más precisa y relevante para tu situación. También estoy aquí para ayudarte con cualquier otra pregunta o tema en el que pueda asistir. ¿Hay algo más en lo que pueda ayudarte hoy?</div>');
+            }
+            $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+        }
+
+        // Add event listener for the "Enter" key
+        document.getElementById('user-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                buscarRespuestas();
+            }
+        });
     </script>
 </body>
 </html>
